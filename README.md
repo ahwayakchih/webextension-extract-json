@@ -1,6 +1,6 @@
 # webextension-extract-json
 
-Browser action which shows JSON data found in PRE elements on the current page.
+Browser action which shows JSON data found in PRE elements on the current page and allows to download each one as a separate JSON file.
 
 # TODO
 

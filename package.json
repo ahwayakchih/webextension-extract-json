@@ -1,7 +1,7 @@
 {
   "name": "webextension_extract_json",
   "version": "1.0.0",
-  "description": "Browser action which shows JSON data found in PRE elements on the current page.",
+  "description": "Browser action which shows JSON data found in PRE elements on the current page and allows to download each one as a separate JSON file.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-chrome": "google-chrome --pack-extension=./src --pack-extension-key=./extract-json.pem && mv ./src.crx ./build/chrome-extract-json.crx"
