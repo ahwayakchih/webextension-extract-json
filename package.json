@@ -4,7 +4,7 @@
   "description": "Browser action which shows JSON data found in PRE elements on the current page.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-chrome": "google-chrome --pack-extension=./src --pack-extension-key=./extract-json.pem && mv ./src.crx ./build/extract-json.crx"
+    "build-chrome": "google-chrome --pack-extension=./src --pack-extension-key=./extract-json.pem && mv ./src.crx ./build/chrome-extract-json.crx"
   },
   "homepage": "https://github.com/ahwayakchih/webextension-extract-json",
   "author": "Marcin Konicki <ahwayakchih@neoni.net>",
