@@ -1,25 +1,30 @@
-/* global __extractJSON:true */
-// The popup injects this script into all frames in the active tab.
+/* global XAPI */
+// background.js injects this script into all frames in the active tab.
 // Prevent multiple initializations.
 // eslint-disable-next-line
 var __extractJSON = __extractJSON || (function () {
-	const actionHandler = {};
-	let lastScrollY = window.scrollY;
+	const actionHandler = {
+		_port       : null,
+		_lastScrollY: window.scrollY,
+		scrollTo    : actionScrollTo,
+		scrollBack  : actionScrollBack,
+		extract     : actionExtract,
+		download    : actionDownload,
+		downloaded  : actionDownloaded
+	};
 
-	const downloads = new Map();
-
-	actionHandler.scrollTo = function actionScrollTo (id) {
+	function actionScrollTo (id) {
 		const pre = document.querySelector(`pre[data-extracted-json-id="${id}"]`);
 		const box = pre && pre.getBoundingClientRect();
-		lastScrollY = window.scrollY;
-		window.scroll(0, (box && box.top) + lastScrollY);
-	};
+		this._lastScrollY = window.scrollY;
+		window.scroll(0, (box && box.top) + this._lastScrollY);
+	}
 
-	actionHandler.scrollBack = function actionScrollBack () {
-		window.scroll(0, lastScrollY);
-	};
+	function actionScrollBack () {
+		window.scroll(0, this._lastScrollY);
+	}
 
-	actionHandler.update = function actionUpdate (template) {
+	function actionExtract (template) {
 		// eslint-disable-next-line no-new-func
 		const generate = template && new Function('return `' + template + '`;');
 		const extract = function (js, text) {
@@ -30,7 +35,8 @@ var __extractJSON = __extractJSON || (function () {
 			return text.match(/^[^\n]*\n[^\n]*\n[^\n]*\n/); // Show only three first lines
 		};
 
-		chrome.runtime.sendMessage({
+		this._port.postMessage({
+			to    : 'popup',
 			action: 'update',
 			args  : [Array.from(document.getElementsByTagName('pre')).reduce(function (result, pre) {
 				const data = pre.textContent;
@@ -47,63 +53,61 @@ var __extractJSON = __extractJSON || (function () {
 					pre.setAttribute('data-extracted-json-id', id);
 				}
 				catch (e) {
-					// Nothing. Ignore this data.
+					// Nothing. Ignore this data, remove our attributes, if there were any.
+					pre.removeAttribute('data-extracted-json-id');
+					pre.removeAttribute('data-extracted-json-downloaded');
 				}
 
 				return result;
 			}, {})]
 		});
-	};
+	}
 
-	actionHandler.download = function actionDownload (id) {
+	function actionDownload (id) {
 		const pre = document.querySelector(`pre[data-extracted-json-id="${id}"]`);
 		if (!pre) {
 			return;
 		}
 
-		const blob = new Blob([pre.textContent], {type: 'data:attachment/text'});
-		const url = window.URL.createObjectURL(blob);
-
-		downloads.set(id, url);
-
 		// Send message back, to download using "Save As..." dialog:
-		chrome.runtime.sendMessage({action: 'download', args: [id, url]});
+		this._port.postMessage({action: 'download', args: [id, pre.textContent]});
+	}
 
-		// Use link + click to download automatically, without "Save As..." dialog:
-		// const a = document.createElement('a');
-		// a.href = url;
-		// a.download = 'extracted.json';
-		// a.click();
-		// window.URL.revokeObjectURL(url);
-	};
-
-	actionHandler.downloaded = function actionDownloaded (id) {
-		const url = downloads.get(id);
-
-		if (!url) {
-			return;
-		}
-
-		downloads.delete(id);
-		window.URL.revokeObjectURL(url);
-
+	function actionDownloaded (id) {
 		const pre = document.querySelector(`pre[data-extracted-json-id="${id}"]`);
 		if (pre) {
 			pre.setAttribute('data-extracted-json-downloaded', true);
 		}
-	};
+	}
 
 	function onMessage (message) {
 		if (!message || !message.action || !actionHandler[message.action]) {
 			return;
 		}
 
-		actionHandler[message.action].apply(undefined, message.args || []);
+		actionHandler[message.action].apply(actionHandler, message.args || []);
 	}
 
-	chrome.runtime.onMessage.addListener(onMessage);
+	function onDisconnect (port) {
+		port.onMessage.removeListener(onMessage);
+		port.onDisconnect.removeListener(onDisconnect);
 
-	return actionHandler.update;
+		if (actionHandler._port === port) {
+			port.postMessage({action: 'message', message: 'content disconnected'});
+			actionHandler._port.disconnect();
+			actionHandler._port = null;
+		}
+	}
+
+	return function connect () {
+		if (actionHandler._port) {
+			actionHandler._port.disconnect();
+		}
+
+		actionHandler._port = XAPI.runtime.connect({name: 'source'});
+		actionHandler._port.onMessage.addListener(onMessage);
+		actionHandler._port.onDisconnect.addListener(onDisconnect);
+	};
 })();
 
 __extractJSON();

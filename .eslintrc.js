@@ -17,7 +17,8 @@ module.exports = {
 	env: {
 		es6: true,
 		browser: true,
-		webextensions: true
+		webextensions: true,
+		node: true
 	},
 	rules: {
 		// Possible Errors
@@ -170,7 +171,7 @@ module.exports = {
 		'max-nested-callbacks': [1, 4],
 		'max-params': [1, {max: 4}],
 		'max-statements-per-line': 2,
-		'new-cap': [2, {newIsCap: true, capIsNew: true}],
+		'new-cap': [0, {newIsCap: true, capIsNew: true}],
 		'new-parens': 2,
 		'newline-per-chained-call': 2,
 		'no-array-constructor': 2,
