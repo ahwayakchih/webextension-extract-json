@@ -98,4 +98,11 @@
 	});
 
 	XAPI.downloads.onChanged.addListener(onDownloadChange);
+
+	// Chrome does not support loading SVG icon from manifest,
+	// but it does supoort it when loaded from script:
+	// https://bugs.chromium.org/p/chromium/issues/detail?id=29683#c34
+	XAPI.browserAction.setIcon({
+		path: 'icon.svg'
+	});
 })();
