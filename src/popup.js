@@ -65,6 +65,20 @@ window.onload = function () {
 		backend.postMessage({to: 'source', action: 'scrollTo', args: [id]});
 	}, {capture: true});
 
+	document.addEventListener('wheel', function (event) {
+		const element = event.target;
+
+		if (!element || !element.matches || !element.matches('a')) {
+			return;
+		}
+
+		const delta = {
+			deltaX: event.deltaX,
+			deltaY: event.deltaY
+		};
+		backend.postMessage({to: 'source', action: 'mousewheel', args: [delta]});
+	}, {capture: true});
+
 	document.addEventListener('click', function (event) {
 		const element = event.target;
 

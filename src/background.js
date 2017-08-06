@@ -92,7 +92,7 @@
 			XAPI.tabs.executeScript({file: 'XAPI.js', allFrames: true});
 			XAPI.tabs.executeScript({file: 'content.js', allFrames: true});
 		}
-		else if (port.name === 'source') {
+		else if (port.name === 'source' && clients.popup) {
 			port.postMessage({action: 'extract'});
 		}
 	});

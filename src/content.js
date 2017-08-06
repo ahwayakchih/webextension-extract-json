@@ -6,12 +6,17 @@ var __extractJSON = __extractJSON || (function () {
 	const actionHandler = {
 		_port       : null,
 		_lastScrollY: window.scrollY,
+		mousewheel  : actionMouseWheel,
 		scrollTo    : actionScrollTo,
 		scrollBack  : actionScrollBack,
 		extract     : actionExtract,
 		download    : actionDownload,
 		downloaded  : actionDownloaded
 	};
+
+	function actionMouseWheel (delta = {deltaX: 0, deltaY: 0}) {
+		window.scroll(window.scrollX + (delta.deltaX || 0), window.scrollY + (delta.deltaY || 0));
+	}
 
 	function actionScrollTo (id) {
 		const pre = document.querySelector(`pre[data-extracted-json-id="${id}"]`);
