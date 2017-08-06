@@ -3,9 +3,11 @@ const run = require('gulp-run-command').default;
 const sequence = require('gulp-sequence');
 const fs = require('fs');
 
+const CHROME_KEY_NAME = 'chrome-extract-json.pem';
+
 const chromeKeyExists = (() => {
 	try {
-		fs.accessSync();
+		fs.accessSync(CHROME_KEY_NAME);
 		return true;
 	}
 	catch (e) {
@@ -27,9 +29,9 @@ gulp.task('build-sources', run([
 ]));
 
 gulp.task('build-export-chrome', run([
-	'google-chrome --pack-extension=./build-src' + (chromeKeyExists ? ' --pack-extension-key=./chrome-extract-json.pem' : ''),
+	'google-chrome --pack-extension=./build-src' + (chromeKeyExists ? ` --pack-extension-key=./${CHROME_KEY_NAME}` : ''),
 	'mv ./build-src.crx ./build/chrome-extract-json.crx',
-	chromeKeyExists ? '' : 'mv ./build-src.pem ./chrome-extract-json.pem'
+	chromeKeyExists ? '' : `mv ./build-src.pem ${CHROME_KEY_NAME}`
 ], {ignoreErrors: true}));
 
 gulp.task('build-export-firefox', run([
