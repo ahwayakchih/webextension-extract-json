@@ -4,8 +4,6 @@ Browser action which shows JSON data found in PRE elements on the current page a
 
 # TODO
 
-- Use polyfill (https://github.com/mozilla/webextension-polyfill) and support both Firefox and Chrome
-- Better icon
 - Settings with:
 	- selector for "source" elements (currently only PRE elements are checked)
 	- instead of a single "excerpt", allow creating "excerpt" and "title" through
