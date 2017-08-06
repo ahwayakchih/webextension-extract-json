@@ -3,8 +3,9 @@ const run = require('gulp-run-command').default;
 const sequence = require('gulp-sequence');
 const fs = require('fs');
 
-const CHROME_KEY_NAME = 'chrome-extract-json.pem';
+const config = require('./package.json');
 
+const CHROME_KEY_NAME = 'chrome-extract-json.pem';
 const chromeKeyExists = (() => {
 	try {
 		fs.accessSync(CHROME_KEY_NAME);
@@ -24,9 +25,18 @@ gulp.task('build-prepare', run([
 	'mkdir -p ./build'
 ], {ignoreErrors: true}));
 
-gulp.task('build-sources', run([
+gulp.task('build-sources-manifest', function (done) {
+	const manifest = require('./src/manifest.json');
+	manifest.version = config.version;
+	manifest.description = config.description;
+	fs.writeFile('./src/manifest.json', JSON.stringify(manifest, null, '\t'), done);
+});
+
+gulp.task('build-sources-prepare', run([
 	'cp -a ./src ./build-src'
 ]));
+
+gulp.task('build-sources', sequence('build-sources-manifest', 'build-sources-prepare'));
 
 gulp.task('build-export-chrome', run([
 	'google-chrome --pack-extension=./build-src' + (chromeKeyExists ? ` --pack-extension-key=./${CHROME_KEY_NAME}` : ''),
@@ -35,8 +45,10 @@ gulp.task('build-export-chrome', run([
 ], {ignoreErrors: true}));
 
 gulp.task('build-export-firefox', run([
-	'zip -r -FS ../build/firefox-extract-json.zip . -i *'
-], {ignoreErrors: true, cwd: 'build-src/'}));
+	// 'zip -r -FS ../build/firefox-extract-json.zip . -i *'
+	'web-ext build -s ./build-src/ -a ./build/ -o',
+	`mv ./build/extract_json-${config.version}.zip ./build/firefox-extract-json.zip`
+], {ignoreErrors: true}));
 
 gulp.task('build', sequence('clean', 'build-prepare', 'build-sources', ['build-export-chrome', 'build-export-firefox']));
 

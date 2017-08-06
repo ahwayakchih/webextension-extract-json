@@ -21,6 +21,7 @@
     "gulp": "^3.9.1",
     "gulp-run-command": "0.0.9",
     "gulp-sequence": "^0.4.6",
+    "web-ext": "^2.0.0",
     "webextension-polyfill": "^0.1.1"
   }
 }
