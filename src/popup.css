@@ -8,15 +8,18 @@ html, body {
 }
 
 .sources {
+	display: block;
 	margin: 0;
 	padding: 0;
 }
 
 .sources .item {
+	display: block;
 	overflow: hidden;
 	position: relative;
 
-	max-height: 3.6em;
+	min-height: 3.6em;
+	max-height: 4em;
 
 	margin: 0;
 	padding: 0.5em;

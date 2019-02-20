@@ -1,7 +1,7 @@
 {
 	"name": "Extract JSON",
 	"description": "Browser action which shows JSON data found in PRE elements on the current page and allows to download each one as a separate JSON file.",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"minimum_chrome_version": "59.0.3071.115",
 	"permissions": [
 		"activeTab",

@@ -1,9 +1,13 @@
-/* global XAPI */
+/* eslint-env mocha, browser */
+/* global XAPI:readable */
 window.onload = function () {
 	const allSources = new Map();
 	const actionHandler = {
 		update: actionUpdateSources
 	};
+
+	const $sources = document.getElementById('sources');
+	const emptyHTML = $sources && $sources.removeChild($sources.firstChild);
 
 	var backend = XAPI.runtime.connect({name: 'popup'});
 	backend.onMessage.addListener(onMessage);
@@ -15,7 +19,7 @@ window.onload = function () {
 
 		a.id = key;
 		a.href = '#';
-		a.textContent = source.excerpt;
+		a.textContent = source.type + ': ' + source.excerpt;
 
 		item.appendChild(a);
 		item.classList.add('item');
@@ -31,10 +35,12 @@ window.onload = function () {
 	function actionUpdateSources (sources) {
 		Object.keys(sources).forEach(key => allSources.set(key, sources[key]));
 
-		const ol = document.getElementById('sources');
-		ol.innerHTML = '';
+		$sources.innerHTML = '';
+		allSources.forEach((source, key) => $sources.appendChild(buildSourceItem(source, key)));
 
-		allSources.forEach((source, key) => ol.appendChild(buildSourceItem(source, key)));
+		if (allSources.size < 1) {
+			$sources.appendChild(emptyHTML);
+		}
 	}
 
 	function onMessage (message) {

@@ -1,6 +1,11 @@
-/* global XAPI */
-// background.js injects this script into all frames in the active tab.
-// Prevent multiple initializations.
+/* eslint-env mocha, browser */
+/* global XAPI:readable */
+
+/**
+ * background.js injects this script into all frames in the active tab.
+ * Prevent multiple initializations.
+ */
+
 // eslint-disable-next-line
 var __extractJSON = __extractJSON || (function () {
 	const actionHandler = {
@@ -29,14 +34,8 @@ var __extractJSON = __extractJSON || (function () {
 		window.scroll(0, this._lastScrollY);
 	}
 
-	function actionExtract (template) {
-		// eslint-disable-next-line no-new-func
-		const generate = template && new Function('return `' + template + '`;');
-		const extract = function (js, text) {
-			if (generate) {
-				return generate.call(js);
-			}
-
+	function actionExtract () {
+		const extract = function (data, text) {
 			return text.match(/^[^\n]*\n[^\n]*\n[^\n]*\n/); // Show only three first lines
 		};
 
@@ -44,18 +43,23 @@ var __extractJSON = __extractJSON || (function () {
 			to    : 'popup',
 			action: 'update',
 			args  : [Array.from(document.getElementsByTagName('pre')).reduce(function (result, pre) {
-				const data = pre.textContent;
-				const id = performance.now().toString();
+				const src = pre.textContent;
+				const srcId = pre.getAttribute('data-extracted-json-id');
+				const id = srcId || performance.now().toString();
 
 				try {
 					// Parse it just to be sure it is a valid JSON...
+					const data = JSON.parse(src);
 					// ... and if it is, add it to result...
 					result[id] = {
-						excerpt   : extract(JSON.parse(data), data),
+						type      : Array.isArray(data) ? 'array(' + data.length + ')' : 'object',
+						excerpt   : extract(data, src),
 						downloaded: pre.getAttribute('data-extracted-json-downloaded')
 					};
 					// ... and mark this PRE element, so we can quickly scroll to it when needed.
-					pre.setAttribute('data-extracted-json-id', id);
+					if (id !== srcId) {
+						pre.setAttribute('data-extracted-json-id', id);
+					}
 				}
 				catch (e) {
 					// Nothing. Ignore this data, remove our attributes, if there were any.

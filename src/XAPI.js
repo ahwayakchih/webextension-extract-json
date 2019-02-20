@@ -1,4 +1,6 @@
-/* global XAPI:true */
+/* eslint-env mocha, browser */
+/* global XAPI:writeable */
+/* exported XAPI */
 // eslint-disable-next-line
 var XAPI = XAPI || (function () {
 	const API = typeof browser === 'undefined' ? chrome : browser;

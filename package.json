@@ -1,13 +1,13 @@
 {
   "name": "webextension_extract_json",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Browser action which shows JSON data found in PRE elements on the current page and allows to download each one as a separate JSON file.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "gulp": "gulp"
   },
   "homepage": "https://github.com/ahwayakchih/webextension-extract-json",
-  "author": "Marcin Konicki <ahwayakchih@neoni.net>",
+  "author": "Marcin Konicki <https://ahwayakchih.neoni.net>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/ahwayakchih/webextension-extract-json/issues"
@@ -17,11 +17,9 @@
     "url": "git://github.com/ahwayakchih/webextension-extract-json.git"
   },
   "devDependencies": {
-    "eslint": "^4.4.0",
-    "gulp": "^3.9.1",
+    "eslint": "^5.14.1",
+    "gulp": "^4.0.0",
     "gulp-run-command": "0.0.9",
-    "gulp-sequence": "^0.4.6",
-    "web-ext": "^2.0.0",
-    "webextension-polyfill": "^0.1.1"
+    "web-ext": "^2.9.3"
   }
 }

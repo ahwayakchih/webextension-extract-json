@@ -89,10 +89,12 @@
 		});
 
 		if (port.name === 'popup') {
+			// Inject our extractor into active tab
 			XAPI.tabs.executeScript({file: 'XAPI.js', allFrames: true});
 			XAPI.tabs.executeScript({file: 'content.js', allFrames: true});
 		}
 		else if (port.name === 'source' && clients.popup) {
+			// This is called from `content.js`, so we know that `popup.js` works and awaits data now
 			port.postMessage({action: 'extract'});
 		}
 	});
@@ -100,7 +102,7 @@
 	XAPI.downloads.onChanged.addListener(onDownloadChange);
 
 	// Chrome does not support loading SVG icon from manifest,
-	// but it does supoort it when loaded from script:
+	// but it does support it when loaded from script:
 	// https://bugs.chromium.org/p/chromium/issues/detail?id=29683#c34
 	XAPI.browserAction.setIcon({
 		path: 'icon.svg'
