@@ -7,11 +7,10 @@
 module.exports = {
 	root: true,
 	parserOptions: {
-		ecmaVersion: 7,
+		ecmaVersion: 2018,
 		sourceType: 'script',
 		ecmaFeatures: {
-			impliedStrict: true,
-			experimentalObjectRestSpread: true
+			impliedStrict: true
 		}
 	},
 	env: {
