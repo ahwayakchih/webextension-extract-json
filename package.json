@@ -20,6 +20,7 @@
     "eslint": "^5.14.1",
     "gulp": "^4.0.0",
     "gulp-run-command": "0.0.9",
+    "puppeteer-core": "^1.12.2",
     "web-ext": "^2.9.3"
   }
 }
