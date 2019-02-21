@@ -19,6 +19,12 @@ var __extractJSON = __extractJSON || (function () {
 		downloaded  : actionDownloaded
 	};
 
+	function _generateId (index) {
+		const a = new Uint32Array(1);
+		window.crypto.getRandomValues(a);
+		return index + '-' + a.join('');
+	}
+
 	function actionMouseWheel (delta = {deltaX: 0, deltaY: 0}) {
 		window.scroll(window.scrollX + (delta.deltaX || 0), window.scrollY + (delta.deltaY || 0));
 	}
@@ -42,10 +48,10 @@ var __extractJSON = __extractJSON || (function () {
 		this._port.postMessage({
 			to    : 'popup',
 			action: 'update',
-			args  : [Array.from(document.getElementsByTagName('pre')).reduce(function (result, pre) {
+			args  : [Array.from(document.getElementsByTagName('pre')).reduce(function (result, pre, index) {
 				const src = pre.textContent;
 				const srcId = pre.getAttribute('data-extracted-json-id');
-				const id = srcId || performance.now().toString();
+				const id = srcId || _generateId(index);
 
 				try {
 					// Parse it just to be sure it is a valid JSON...
